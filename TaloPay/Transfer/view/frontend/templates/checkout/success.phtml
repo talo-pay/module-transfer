@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/** @var $block \Magento\Checkout\Block\Onepage\Success */
+?>
+<?php
+$src = $block->getPluginSrc();
+$order = $block->getOrder();
+$payment = $order->getPayment();
+$paymentId = $block->getPaymentId();
+?>
+<?php if ($payment->getMethod() === 'talopay_transfer'): ?>
+    <div class="actions-toolbar flex">
+        <div id="talopay-order" data-paymentid="<?= $block->escaper->escapeHtml($paymentId) ?>"></div>
+        <script>
+            require(["jquery", "TaloPay"], function($, pym) {});
+        </script>
+    </div>
+<?php endif; ?>

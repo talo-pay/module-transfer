@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <talopay_transfer>
+                <active>1</active>
+                <title translate="label">Transferencia Bancaria - Powered by Talo</title>
+                <model>TaloPay\Transfer\Model\Transfer</model>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+            </talopay_transfer>
+        </payment>
+        <csp>
+            <policies>
+                <storefront>
+                    <frame-ancestors>
+                        <inline>0</inline>
+                    </frame-ancestors>
+                </storefront>
+                <admin>
+                    <frame-ancestors>
+                        <inline>0</inline>
+                    </frame-ancestors>
+                </admin>
+            </policies>
+        </csp> 
+    </default>
+</config>

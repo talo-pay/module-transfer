@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="script-src">
+            <values>
+                <value id="talopay-dev-pluginjs" type="host">https://talo-public-res.s3.us-east-1.amazonaws.com/magento/dev/talo-cvus-front.js</value>
+                <value id="talopay-dev-api" type="host">https://dev-api.talo.com.ar</value>
+
+                <!-- prod -->
+                <value id="talopay-prod-pluginjs" type="host">https://talo-public-res.s3.us-east-1.amazonaws.com/magento/prod/talo-cvus-front.js</value>
+                <value id="talopay-prod-api" type="host">https://api.talo.com.ar</value>
+                
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>

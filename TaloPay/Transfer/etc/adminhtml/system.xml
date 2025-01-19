@@ -1,0 +1,11 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <resource>TaloPay_Transfer::config</resource>
+            <group id="talopay_configurations" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Talo Pay</label>
+                <include path="TaloPay_Transfer::system/credentials.xml"/>
+            </group>
+        </section>
+    </system>
+</config>

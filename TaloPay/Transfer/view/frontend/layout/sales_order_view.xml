@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="TaloPay_Transfer::css/style.css"/>
+        <script src="TaloPay_Transfer::js/copytoclipboard.js"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="TaloPay\Transfer\Block\Order\Payment\Info" template="TaloPay_Transfer::order/payment/info.phtml"/>
+        </referenceContainer>
+    </body>
+</page>
