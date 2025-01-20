@@ -1,11 +1,11 @@
-# TaloPay Transfer para Magento 2
+# TaloPay Transferencias para Magento 2
 
 <div>
     <a href="https://www.loom.com/share/e430904662b440c48c5804761d1c8a75">
       <p>Magento DEMO - ver video</p>
     </a>
     <a href="https://www.loom.com/share/e430904662b440c48c5804761d1c8a75">
-      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/e430904662b440c48c5804761d1c8a75-debf02ffdf2dac47-full-play.gif">
+      <img style="max-width:600px;" src="https://cdn.loom.com/sessions/thumbnails/e430904662b440c48c5804761d1c8a75-debf02ffdf2dac47-full-play.gif">
     </a>
   </div>
 
