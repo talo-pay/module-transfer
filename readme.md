@@ -11,13 +11,7 @@
 
 ## Descripción
 
-TaloPay Transfer es un módulo de Magento 2 que proporciona una solución de pagos integrada para tu tienda online. Este módulo permite procesar transferencias bancarias de manera segura y eficiente.
-
-## Requisitos
-
--   Magento CE/EE 2.x
--   PHP 7.4 o superior
--   Composer
+TaloPay Transferencias es un módulo de Magento 2 que proporciona una solución de pagos integrada para tu tienda online. Este módulo permite procesar transferencias bancarias de manera segura y eficiente.
 
 ## Instalación
 
