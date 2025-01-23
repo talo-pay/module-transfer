@@ -15,7 +15,7 @@ TaloPay Transferencias es un módulo de Magento 2 que proporciona una solución 
 
 ## Instalación
 
-### Vía Composer (Recomendado)
+### Vía Composer (Próximamente)
 
 ```bash
 composer require talopay/transfer
