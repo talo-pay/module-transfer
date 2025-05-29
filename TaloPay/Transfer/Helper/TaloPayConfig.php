@@ -26,7 +26,7 @@ class TaloPayConfig
      */
     public function getTaloPayPlatformUrl()
     {
-        return 'https://app.talo.com.ar/';
+        return 'https://talo-public-res.s3.us-east-1.amazonaws.com/magento/prod/talo-cvus-front.js';
     }
 
     /**
