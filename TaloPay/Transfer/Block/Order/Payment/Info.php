@@ -116,6 +116,16 @@ class Info extends \Magento\Framework\View\Element\Template
             'amount' => $order->getTaloPayAmount()
         ];
     }
+
+    /**
+     * Get Env
+     *
+     * @return string
+     */
+    public function getEnv()
+    {
+        return $this->_helperData->getEnv(null);
+    }
     
     /**
      * Get TaloPay Plugin URL

@@ -3,9 +3,8 @@
     <policies>
         <policy id="script-src">
             <values>
-                <value id="talopay-dev-pluginjs" type="host">https://talo-public-res.s3.us-east-1.amazonaws.com/magento/dev/talo-cvus-front.js</value>
-                <value id="talopay-dev-api" type="host">https://dev-api.talo.com.ar</value>
-
+                <value id="talopay-sandbox-pluginjs" type="host">https://talo-public-res.s3.us-east-1.amazonaws.com/magento/sandbox/talo-cvus-front.js</value>
+                <value id="talopay-sandbox-api" type="host">https://sandbox-api.talo.com.ar</value>
                 <!-- prod -->
                 <value id="talopay-prod-pluginjs" type="host">https://talo-public-res.s3.us-east-1.amazonaws.com/magento/prod/talo-cvus-front.js</value>
                 <value id="talopay-prod-api" type="host">https://api.talo.com.ar</value>

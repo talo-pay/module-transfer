@@ -48,31 +48,67 @@ class ChangeConfigModule implements ObserverInterface
             'change_config_module'
         );
         #if store_id and app_id are set just save new credential
-        $storeId = $this->_helperData->getTaloPayStoreId();
-        $appId = $this->_helperData->getTaloPayAppId();
+        $storeId = $this->_helperData->getTaloPayStoreId('production');
+        $appId = $this->_helperData->getTaloPayAppId('production');
+        $storeIdSandbox = $this->_helperData->getTaloPayStoreId('sandbox');
+        $appIdSandbox = $this->_helperData->getTaloPayAppId('sandbox');
+        $this->_helperData->log(
+            'ChangeConfigModule::execute - Store ID and App ID',
+            'change_config_module',
+            [
+                'storeId' => $storeId,
+                'appId' => $appId,
+                'storeIdSandbox' => $storeIdSandbox,
+                'appIdSandbox' => $appIdSandbox
+            ]
+        );
         if (!empty($storeId) && !empty($appId)) {
             $this->_helperData->log(
-                'ChangeConfigModule::execute - Store ID and App ID are set',
+                'ChangeConfigModule::execute - Production Store ID and App ID are set',
                 'change_config_module',
                 [
                     'storeId' => $storeId,
                     'appId' => $appId
                 ]
             );
-            return;
         } else {
             $this->_helperData->log(
-                'ChangeConfigModule::execute - Store ID and App ID are not set. Creating store',
+                'ChangeConfigModule::execute - Production Store ID and App ID are not set. Creating store',
                 'change_config_module'
             );
-            $storeCreated = $this->_storeHandler->createStore();
+            $storeCreated = $this->_storeHandler->createStore('production');
             if (!$storeCreated) {
                 $this->_helperData->log(
-                    'ChangeConfigModule::execute - Error creating store',
+                    'ChangeConfigModule::execute - Error creating production store',
                     'change_config_module'
                 );
-                return;
+                
             }
         }
+
+        if (!empty($storeIdSandbox) && !empty($appIdSandbox)) {
+            $this->_helperData->log(
+                'ChangeConfigModule::execute - Sandbox Store ID and App ID are set',
+                'change_config_module',
+                [
+                    'storeId' => $storeIdSandbox,
+                    'appId' => $appIdSandbox
+                ]
+            );
+            return;
+        } else if(!empty($this->_helperData->getTaloPayUserId('sandbox')) && !empty($this->_helperData->getTaloPayClientId('sandbox')) && !empty($this->_helperData->getTaloPayClientSecret('sandbox'))){
+            $this->_helperData->log(
+                'ChangeConfigModule::execute - Sandbox credentials are set. Creating store',
+                'change_config_module'
+            );
+            $storeCreated = $this->_storeHandler->createStore('sandbox');
+            if (!$storeCreated) {
+                $this->_helperData->log(
+                    'ChangeConfigModule::execute - Error creating sandbox store',
+                    'change_config_module'
+                );
+            }
+        }
+        
     }
 }

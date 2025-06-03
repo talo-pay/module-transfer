@@ -86,7 +86,6 @@ class ChargePaid
     public function chargePaid($paymentId)
     {
         $this->_helperData->log('TaloPay::chargePaid Start '.$paymentId, self::LOG_NAME);
-
         $taloPayment = $this->_taloApiClient->getTaloPayment($paymentId);
 
         $this->_helperData->log('TaloPay::chargePaid Payment ', self::LOG_NAME, $taloPayment);

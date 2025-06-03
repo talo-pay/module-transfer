@@ -13,12 +13,13 @@ $src = $block->getPluginSrc();
 $order = $block->getOrder();
 $payment = $order->getPayment();
 $paymentId = $block->getPaymentId();
+$env = $block->getEnv();
 ?>
 <?php if ($payment->getMethod() === 'talopay_transfer'): ?>
     <div class="actions-toolbar flex">
         <div id="talopay-order" data-paymentid="<?= $block->escaper->escapeHtml($paymentId) ?>"></div>
         <script>
-            require(["jquery", "TaloPay"], function($, pym) {});
+            require(["jquery", "TaloPay_<?= $env ?>"], function($, pym) {});
         </script>
     </div>
 <?php endif; ?>

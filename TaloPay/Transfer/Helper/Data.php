@@ -204,21 +204,23 @@ class Data extends AbstractHelper
     /**
      * Get TaloPay API URL
      *
+     * @param string $env
      * @return string
      */
-    public function getTaloPayApiUrl()
+    public function getTaloPayApiUrl($env = 'production')
     {
-        return $this->_talopayConfig->getTaloPayApiUrl();
+        return $this->_talopayConfig->getTaloPayApiUrl($env);
     }
 
     /**
      * Get TaloPay platform url
      *
-     * @return void
+     * @param string $env
+     * @return string
      */
-    public function getTaloPayPlatformUrl()
+    public function getTaloPayPlatformUrl($env = 'production')
     {
-        return $this->_talopayConfig->getTaloPayPlatformUrl();
+        return $this->_talopayConfig->getTaloPayPlatformUrl($env);
     }
 
     /**
@@ -228,7 +230,8 @@ class Data extends AbstractHelper
      */
     public function getTaloPayPluginUrlScript(): string
     {
-        return $this->_talopayConfig->getTaloPayPluginUrlScript();
+        $activeEnv = $this->getEnv(null);
+        return $this->_talopayConfig->getTaloPayPluginUrlScript($activeEnv);
     }
 
     /**
@@ -238,17 +241,20 @@ class Data extends AbstractHelper
      */
     public function isAvailable():bool
     {
-        $clientId = $this->getConfig('payment/talopay_transfer/client_id');
-        $clientSecret = $this->getConfig('payment/talopay_transfer/client_secret');
-        $userId = $this->getConfig('payment/talopay_transfer/user_id');
-        $storeId = $this->getConfig('payment/talopay_transfer/store_id');
-        $appId = $this->getConfig('payment/talopay_transfer/app_id');
+        $activeEnv = $this->getConfig('payment/talopay_transfer/talopay_sandbox_mode') === '1' ? 'sandbox' : 'production';
+
+        $clientId = $this->getTaloPayClientId($activeEnv);
+        $clientSecret = $this->getTaloPayClientSecret($activeEnv);
+        $userId = $this->getTaloPayUserId($activeEnv);
+        $storeId = $this->getTaloPayStoreId($activeEnv);
+        $appId = $this->getTaloPayAppId($activeEnv);
         $this->log('isAvailable', 'talopay', [
             'clientId' => $clientId,
             'clientSecret' => $clientSecret,
             'userId' => $userId,
             'storeId' => $storeId,
-            'appId' => $appId
+            'appId' => $appId,
+            'activeEnv' => $activeEnv,
         ]);
         return !empty($clientId) && !empty($clientSecret) && !empty($userId) && !empty($storeId) && !empty($appId);
     }
@@ -321,114 +327,188 @@ class Data extends AbstractHelper
     /**
      * Get app id
      *
+     * @param string $env
      * @param boolean $clearCache
      * @return void
      */
-    public function getTaloPayAppId($clearCache = false)
+    public function getTaloPayAppId($env = null, $clearCache = false)
     {
-        return $this->getConfig('payment/talopay_transfer/app_id', $clearCache);
+        $activeEnv = $this->getEnv($env);
+        $path = $activeEnv === 'production'
+            ? 'payment/talopay_transfer/app_id'
+            : 'payment/talopay_transfer/app_id_sandbox';
+        return $this->getConfig($path, $clearCache);
+    }
+
+    /**
+     * Get env
+     *
+     * @param string $env
+     * @return string
+     */
+    public function getEnv($env = null)
+    {
+        $isSandbox = $this->getConfig('payment/talopay_transfer/talopay_sandbox_mode');
+        return $env ?? ($isSandbox === '1' ? 'sandbox' : 'production');
     }
 
     /**
      * Set app id
      *
      * @param string $appID
+     * @param string $env
      * @param boolean $clearCache
      * @return void
      */
-    public function setAppId($appID, $clearCache = false)
+    public function setAppId($appID, $env = null, $clearCache = false)
     {
-        return $this->setConfig('app_id', $appID, $clearCache);
+        $activeEnv = $this->getEnv($env);
+        $path = $activeEnv === 'production'
+            ? 'app_id'
+            : 'app_id_sandbox';
+        return $this->setConfig($path, $appID, $clearCache);
     }
 
     /**
      * Get store id
      *
+     * @param string $env
      * @param boolean $clearCache
      * @return void
-     */
-    public function getTaloPayStoreId($clearCache = false)
+        */
+    public function getTaloPayStoreId($env = null, $clearCache = false)
     {
-        return $this->getConfig('payment/talopay_transfer/store_id', $clearCache);
+        $this->log('getTaloPayStoreId', 'talopay', [
+            'env' => $env,
+            'clearCache' => $clearCache,
+        ]);
+        $activeEnv = $this->getEnv($env);
+        $this->log('getTaloPayStoreId', 'talopay', [
+            'env' => $env,
+            'activeEnv' => $activeEnv,
+        ]);
+        $path = $activeEnv === 'production'
+            ? 'payment/talopay_transfer/store_id'
+            : 'payment/talopay_transfer/store_id_sandbox';
+        $this->log('getTaloPayStoreId', 'talopay', [
+            'path' => $path,
+            'activeEnv' => $activeEnv,
+        ]);
+        return $this->getConfig($path, $clearCache);
     }
 
     /**
      * Set store id
      *
      * @param string $storeId
+     * @param string $env
      * @param boolean $clearCache
      * @return void
      */
-    public function setStoreId($storeId, $clearCache = false)
+    public function setStoreId($storeId, $env = null, $clearCache = false)
     {
-        return $this->setConfig('store_id', $storeId, $clearCache);
+        $activeEnv = $this->getEnv($env);
+        $path = $activeEnv === 'production'
+            ? 'store_id'
+            : 'store_id_sandbox';
+        return $this->setConfig($path, $storeId, $clearCache);
     }
 
     /**
-     * Get client id
+     * Get TaloPay Client ID
      *
+     * @param string $env
      * @param boolean $clearCache
-     * @return void
+     * @return string
      */
-    public function getTaloPayClientId($clearCache = false)
+    public function getTaloPayClientId($env = null, $clearCache = false)
     {
-        return $this->getConfig('payment/talopay_transfer/client_id', $clearCache);
+        $activeEnv = $this->getEnv($env);
+        $path = $activeEnv === 'production'
+            ? 'payment/talopay_transfer/client_id'
+            : 'payment/talopay_transfer/client_id_sandbox';
+        return $this->getConfig($path, $clearCache);
     }
 
     /**
      * Set client id
      *
      * @param string $clientId
+     * @param string $env
      * @param boolean $clearCache
      * @return void
      */
-    public function setClientId($clientId, $clearCache = false)
+    public function setClientId($clientId, $env = null, $clearCache = false)
     {
+        $activeEnv = $this->getEnv($env);
+        $path = $activeEnv === 'production'
+            ? 'payment/talopay_transfer/client_id'
+            : 'payment/talopay_transfer/client_id_sandbox';
         return $this->setConfig('client_id', $clientId, $clearCache);
     }
 
     /**
-     * Get client secret
+     * Get TaloPay Client Secret
      *
+     * @param string $env
      * @param boolean $clearCache
-     * @return void
+     * @return string
      */
-    public function getTaloPayClientSecret($clearCache = false)
+    public function getTaloPayClientSecret($env = null, $clearCache = false)
     {
-        return $this->getConfig('payment/talopay_transfer/client_secret', $clearCache);
+        $activeEnv = $this->getEnv($env);
+        $path = $activeEnv === 'production'
+            ? 'payment/talopay_transfer/client_secret'
+            : 'payment/talopay_transfer/client_secret_sandbox';
+        return $this->getConfig($path, $clearCache);
     }
 
     /**
      * Set client secret
      *
      * @param string $clientSecret
+     * @param string $env
      * @param boolean $clearCache
      * @return void
      */
-    public function setClientSecret($clientSecret, $clearCache = false)
+    public function setClientSecret($clientSecret, $env = null, $clearCache = false)
     {
-        return $this->setConfig('client_secret', $clientSecret, $clearCache);
+        $activeEnv = $this->getEnv($env);
+        $path = $activeEnv === 'production'
+            ? 'client_secret'
+            : 'client_secret_sandbox';
+        return $this->setConfig($path, $clientSecret, $clearCache);
     }
 
     /**
-     * Get user id
+     * Get TaloPay User ID
      *
-     * @return void
+     * @param string $env
+     * @return string
      */
-    public function getTaloPayUserId()
+    public function getTaloPayUserId($env = null)
     {
-        return $this->getConfig('payment/talopay_transfer/user_id');
+        $activeEnv = $this->getEnv($env);
+        $path = $activeEnv === 'production'
+            ? 'payment/talopay_transfer/user_id'
+            : 'payment/talopay_transfer/user_id_sandbox';
+        return $this->getConfig($path);
     }
 
     /**
      * Set user id
      *
      * @param string $userId
+     * @param string $env
      * @param boolean $clearCache
      * @return void
      */
-    public function setUserId($userId, $clearCache = false)
+    public function setUserId($userId, $env = null, $clearCache = false)
     {
-        return $this->setConfig('user_id', $userId, $clearCache);
+        $activeEnv = $this->getEnv($env);
+        $path = $activeEnv === 'production'
+            ? 'user_id'
+            : 'user_id_sandbox';
+        return $this->setConfig($path, $userId, $clearCache);
     }
 }

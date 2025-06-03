@@ -13,12 +13,12 @@ class TaloApiClient
     protected $_helperData;
 
     /**
-     * @var string
+     * @var array
      */
     protected $_token;
 
     /**
-     * @var number
+     * @var array
      */
     protected $_tokenExpiration;
 
@@ -36,6 +36,8 @@ class TaloApiClient
     ) {
         $this->_curl = $curl;
         $this->_helperData = $helperData;
+        $this->_token = [];
+        $this->_tokenExpiration = [];
     }
 
     /**
@@ -45,15 +47,17 @@ class TaloApiClient
      * @param string $url
      * @param array $body
      * @param boolean $auth
+     * @param string $env
      * @return array
      */
-    private function sendRequest($method, $url, $body, $auth = false)
+    private function sendRequest($method, $url, $body, $auth = false, $env = 'production')
     {
         $this->_helperData->log("Starting sendRequest", [
             'method' => $method,
             'url' => $url,
             'body' => $body,
-            'auth' => $auth
+            'auth' => $auth,
+            'env' => $env
         ]);
         try {
             $this->_curl->setOption(CURLOPT_TIMEOUT, 0);
@@ -65,9 +69,9 @@ class TaloApiClient
             $this->_curl->addHeader('Content-Type', 'application/json');
             $this->_curl->addHeader('Accept', 'application/json');
             if ($auth === true) {
-                $this->_curl->addHeader('Authorization', 'Bearer ' . $this->getTaloPayApiAccessToken());
+                $this->_curl->addHeader('Authorization', 'Bearer ' . $this->getTaloPayApiAccessToken($env));
             }
-            $apiUrl = $this->_helperData->getTaloPayApiUrl().$url;
+            $apiUrl = $this->_helperData->getTaloPayApiUrl($env).$url;
             if ($method === 'POST') {
                 $this->_curl->post($apiUrl, json_encode($body));
             } elseif ($method === 'GET') {
@@ -114,21 +118,26 @@ class TaloApiClient
      *
      * @param string $method
      * @param string $url
+     * @param string $env
      * @return void
      */
-    private function throwErrorException($method, $url)
+    private function throwErrorException($method, $url, $env = 'production')
     {
-        throw new LocalizedException(__('An error occurred while processing your request. '.$method.' '.$url));
+        throw new LocalizedException(__('An error occurred while processing your request. '.$method.' '.$url.' '.$env));
     }
 
     /**
      * Check if token is valid
      *
+     * @param string $env
      * @return boolean
      */
-    public function isTokenValid(): bool
+    public function isTokenValid($env = 'production'): bool
     {
-        return $this->_token && time() < $this->_tokenExpiration;
+        if (!isset($this->_token[$env])) {
+            return false;
+        }
+        return $this->_token[$env] && time() < $this->_tokenExpiration[$env];
     }
 
     /**
@@ -137,14 +146,15 @@ class TaloApiClient
      * @param string $userId
      * @param string $clientId
      * @param string $clientSecret
+     * @param string $env
      * @return string
      */
-    public function getNewToken($userId, $clientId, $clientSecret)
+    public function getNewToken($userId, $clientId, $clientSecret, $env = 'production')
     {
         $res = $this->sendRequest('POST', '/users/'. $userId . '/tokens', [
             'client_id' => $clientId,
             'client_secret' => $clientSecret,
-        ]);
+        ], false, $env);
 
         return $res['token'];
     }
@@ -157,8 +167,11 @@ class TaloApiClient
      */
     public function createCharge($chargePayload)
     {
-        $this->_helperData->log("Starting create payment");
-        $res = $this->sendRequest('POST', '/payments/', $chargePayload, false);
+        $activeEnv = $this->_helperData->getConfig('payment/talopay_transfer/talopay_sandbox_mode') === '1' ? 'sandbox' : 'production';
+        $this->_helperData->log("Starting create payment", [
+            'env' => $activeEnv
+        ]);
+        $res = $this->sendRequest('POST', '/payments/', $chargePayload, false, $activeEnv);
         return $res;
     }
 
@@ -166,12 +179,15 @@ class TaloApiClient
      * Create store
      *
      * @param array $storePayload
+     * @param string $env
      * @return array
      */
-    public function createStore($storePayload)
+    public function createStore($storePayload, $env = 'production')
     {
-        $userId = $this->_helperData->getTaloPayUserId();
-        $res = $this->sendRequest('POST', '/users/' . $userId . '/stores', $storePayload, true);
+      
+        $userId = $this->_helperData->getTaloPayUserId($env);
+        $res = $this->sendRequest('POST', '/users/' . $userId . '/stores', $storePayload, true, $env);
+      
         return $res;
     }
 
@@ -183,28 +199,31 @@ class TaloApiClient
      */
     public function getTaloPayment($paymentId)
     {
-        $res = $this->sendRequest('GET', '/payments/' . $paymentId, [], true);
+        $activeEnv = $this->_helperData->getConfig('payment/talopay_transfer/talopay_sandbox_mode') === '1' ? 'sandbox' : 'production';
+        $res = $this->sendRequest('GET', '/payments/' . $paymentId, [], true, $activeEnv);
         return $res;
     }
 
     /**
      * Get TaloPay API Access Token
      *
+     * @param string $env
      * @return string
      */
-    public function getTaloPayApiAccessToken(): string
+    public function getTaloPayApiAccessToken($env = 'production'): string
     {
-        if ($this->isTokenValid()) {
-            return $this->_token;
+        if ($this->isTokenValid($env)) {
+            return $this->_token[$env];
         } else {
-            $userId = $this->_helperData->getTaloPayUserId();
-            $clientId = $this->_helperData->getTaloPayClientId();
-            $clientSecret = $this->_helperData->getTaloPayClientSecret();
+            $userId = $this->_helperData->getTaloPayUserId($env);
+            $clientId = $this->_helperData->getTaloPayClientId($env);
+            $clientSecret = $this->_helperData->getTaloPayClientSecret($env);
 
-            $token = $this->getNewToken($userId, $clientId, $clientSecret);
-            $this->_token = $token;
-            $this->_tokenExpiration = time() + 3600;
-            return $this->_token;
+            $token = $this->getNewToken($userId, $clientId, $clientSecret, $env);
+
+            $this->_token[$env] = $token;
+            $this->_tokenExpiration[$env] = time() + 3600;
+            return $this->_token[$env];
         }
     }
 }
