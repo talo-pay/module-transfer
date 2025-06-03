@@ -178,7 +178,7 @@ class Transfer extends \Magento\Payment\Model\Method\AbstractMethod
             $order->getData()
         );
         $orderId = $order->getIncrementId();
-
+    
         return [
             'price' => [
                 'amount' => $grandTotal,
@@ -220,7 +220,6 @@ class Transfer extends \Magento\Payment\Model\Method\AbstractMethod
             $payload = $this->getPayload($order);
             $this->_helperData->debugJson('Payload ', self::LOG_NAME, $payload);
             $response = (array) $this->_taloApiClient->createCharge($payload);
-
             if (isset($response['errors'])) {
                 $arrayLog = [
                     'response' => $response,

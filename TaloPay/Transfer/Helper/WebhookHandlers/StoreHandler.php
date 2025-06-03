@@ -48,9 +48,10 @@ class StoreHandler
     /**
      * Create store in TaloPay
      *
-     * @return void
+     * @param string $env
+     * @return boolean
      */
-    public function createStore()
+    public function createStore($env = 'production')
     {
         $this->_helperData->log(
             'StoreHandler::createStore - Creating store',
@@ -63,7 +64,8 @@ class StoreHandler
         $this->_helperData->log(
             'StoreHandler::createStore - Hostname',
             self::LOG_NAME,
-            $hostname
+            $hostname,
+            $env
         );
 
         $store_id = $hostname . '_' . $this->_storeManager->getStore()->getId();
@@ -78,11 +80,10 @@ class StoreHandler
         $this->_helperData->log(
             'StoreHandler::createStore - Store Payload',
             self::LOG_NAME,
-            $storePayload
+            $storePayload,
+            $env
         );
-        $storeRes = $this->_taloApiClient->createStore(
-            $storePayload
-        );
+        $storeRes = $this->_taloApiClient->createStore($storePayload, $env);
 
         if ($storeRes) {
             $this->_helperData->log(
@@ -90,8 +91,8 @@ class StoreHandler
                 self::LOG_NAME,
                 $storeRes
             );
-            $this->_helperData->setStoreId($storeRes['store_id'], true);
-            $this->_helperData->setAppId($storeRes['app_id'] ?? $storePayload['app_id'], true);
+            $this->_helperData->setStoreId($storeRes['store_id'], $env, true);
+            $this->_helperData->setAppId($storeRes['app_id'] ?? $storePayload['app_id'], $env, true);
             return true;
         } else {
             return false;

@@ -89,6 +89,16 @@ class Success extends \Magento\Sales\Block\Order\Totals
     }
 
     /**
+     * Get Env
+     *
+     * @return string
+     */
+    public function getEnv()
+    {
+        return $this->_helperData->getEnv(null);
+    }
+
+    /**
      * Get Order
      *
      * @return \Magento\Sales\Model\Order

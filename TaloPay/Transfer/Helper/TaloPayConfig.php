@@ -7,35 +7,47 @@ use Magento\TestFramework\Utility\ChildrenClassesSearch\C;
 class TaloPayConfig
 {
     protected const LOG_NAME = 'talopay_transfer';
-    protected const TALOPAY_ENV = 'prod';
-
+    
     /**
      * Get the TaloPay API URL
      *
      * @return string
      */
-    public function getTaloPayApiUrl()
+    public function getTaloPayApiUrl($env = 'production')
     {
-        return 'https://api.talo.com.ar';
+        if ($env === 'production') {
+            return 'https://api.talo.com.ar';
+        } else {
+            return 'https://sandbox-api.talo.com.ar';
+        }
     }
 
     /**
      * Get the TaloPay Platform URL
      *
-     * @return void
+     * @return string
      */
-    public function getTaloPayPlatformUrl()
+    public function getTaloPayPlatformUrl($env = 'production')
     {
-        return 'https://app.talo.com.ar/';
+        if ($env === 'production') {
+            return 'https://app.talo.com.ar/';
+        } else {
+            return 'https://sandbox.talo.com.ar/';
+        }
     }
 
     /**
      * Get the TaloPay Plugin URL
      *
+     * @param string $env
      * @return string
      */
-    public function getTaloPayPluginUrlScript(): string
+    public function getTaloPayPluginUrlScript($env ='production'): string
     {
-        return 'https://talo-public-res.s3.us-east-1.amazonaws.com/magento/prod/talo-cvus-front.js';
+        if ($env === 'production') {
+            return 'https://talo-public-res.s3.us-east-1.amazonaws.com/magento/prod/talo-cvus-front.js';
+        } else {
+            return 'https://talo-public-res.s3.us-east-1.amazonaws.com/magento/sandbox/talo-cvus-front.js';
+        }
     }
 }
