@@ -1,0 +1,90 @@
+<?php
+/**
+ * Talopay_Transfer
+ * 
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+
+/** @var \TaloPay\Transfer\Block\Payment\View\Instructions $block */
+/** @var \Laminas\Escaper\EscaperInterface $escaper */
+?>
+<?php if($block->isTaloPayTransferMethod()) : ?>
+    <div class="talopay-transfer payment-instructions talo-payment-container">
+        <div class="payment-status waiting">
+            <div class="payment-status-icon"></div>
+            <div class="payment-status-message">
+                <div class="status-message-title"><?= $block->escapeHtml(__('Waiting for payment...')) ?></div>
+                <div class="status-message-description"><?= $block->escapeHtml(__('The order status will be updated once the payment is received')) ?></div>
+            </div>
+        </div>
+        <div id="talo-cvu-payment-info" class="payment-info">
+            <div class="payment-title"><?= $escaper->escapeHtml(__('Make the payment before %1 to complete your purchase', $block->getExpirationDate())) ?></div>
+            <div class="payment-description"><?= $block->escapeHtml(__('After this deadline, the bank details will expire and your order will be canceled. By transferring the exact amount, your purchase will be automatically confirmed.')) ?></div>
+            <div class="payment-warning">
+                <div class="payment-warning-icon"></div>
+                <div class="payment-warning-message">
+                    <div class="status-message-title"><?= $block->escapeHtml(__('Caution')) ?></div>
+                    <div class="status-message-description"><?= $block->escapeHtml(__('The CVU or alias is <strong>exclusive for this purchase order.</strong> Do not try to use them again for another order.'), ['strong']) ?></div>
+                </div>
+            </div>
+
+            <div class="payment-bank-info issuer">
+                <div class="bank-info-owner"><?= $escaper->escapeHtml(__('Beneficiary: %1', $block->getTaloIssuerName())) ?></div>
+                <div class="bank-info-cuit"><?= $escaper->escapeHtml(__('CUIT: %1', $block->getTaloIssuerTaxVatId())) ?></div>
+                <div class="bank-info-bank"><?= $escaper->escapeHtml(__('Bank: Pollux Capital')) ?></div>
+            </div>
+
+            <?php foreach ($block->getTaloQuotes() as $_quote) : ?>
+                <div class="payment-information">
+                    <div class="payment-alias-label"><?= $block->escapeHtml(__('Exclusive alias for this purchase')) ?></div>
+                    <div class="payment-alias-container">
+                        <div class="payment-alias">
+                            <?php if (!empty($_quote['alias'])): ?>
+                                <?= $escaper->escapeHtml(__($_quote['alias'])) ?>
+                            <?php else: ?>
+                                <?= $escaper->escapeHtml(__($_quote['address'])) ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="container-talo-cvus">
+                            <button type="button"
+                                    id="talo-cvu-payment-alias-button"
+                                    class="copy-button"
+                                    data-copy="<?= $escaper->escapeHtml(!empty($_quote['alias']) ? $_quote['alias'] : $_quote['address']) ?>">
+                                <?= $block->escapeHtml(__('Copy')) ?>
+                            </button>
+                            <span id="talo-cvu-alias-tooltip" class="talo-cvu-alias-tooltip">
+                                <?= $block->escapeHtml(__('Copied')) ?>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="payment-amount-label"><?= $block->escapeHtml(__('Exact amount for transfer')) ?></div>
+                    <div class="payment-amount-container">
+                        <div id="talo-cvu-payment-amount" class="payment-amount">
+                            <?= $escaper->escapeHtml($block->toCurrency($_quote['amount'])) ?>
+                        </div>
+                        <div class="container-talo-cvus">
+                            <button type="button"
+                                    id="talo-cvu-payment-amount-button"
+                                    class="copy-button"
+                                    data-copy="<?= $escaper->escapeHtml($_quote['amount']) ?>">
+                                <?= $block->escapeHtml(__('Copy')) ?>
+                            </button>
+                            <span id="talo-cvu-amount-tooltip" class="talo-cvu-amount-tooltip">
+                                <?= $block->escapeHtml(__('Copied')) ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                "taloCopyToClipboard": {}
+            }
+        }
+    </script>
+<?php endif; ?>

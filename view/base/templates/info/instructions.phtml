@@ -1,0 +1,80 @@
+<?php
+/**
+ * Talopay_Transfer
+ * 
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+
+/**
+ * @var \TaloPay\Transfer\Block\Info $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$title = $escaper->escapeHtml(__($block->getMethod()->getTitle()));
+$specificInfo = $block->getSpecificInformation();
+?>
+<?php if ($specificInfo) : ?>
+    <table class="admin__table-secondary order-information-table">
+        <caption class="table-caption"><?= /* @noEscape */ $title ?></caption>
+        <tbody>
+
+        <?php if (isset($specificInfo['payment_url'])) : ?>
+            <tr>
+                <th scope="row">
+                    <?= $escaper->escapeHtml(__('Link')); ?>
+                </th>
+                <td>
+                    <a target="_blank" href="<?= $escaper->escapeHtml($specificInfo['payment_url']) ?>" alt="<?= /* @noEscape */ $title ?>">
+                        <?= $escaper->escapeHtml(__('Details for payment')); ?>
+                    </a>
+                </td>
+            </tr>
+        <?php endif; ?>
+        <?php if (isset($specificInfo['expiration_timestamp'])) : ?>
+            <tr>
+                <th scope="row">
+                    <?= $escaper->escapeHtml(__('Expiration')); ?>
+                </th>
+                <td>
+                    <?= $escaper->escapeHtml($block->formatDate($specificInfo['expiration_timestamp'], IntlDateFormatter::MEDIUM, true)); ?>
+                </td>
+            </tr>
+        <?php endif; ?>
+
+        <?php foreach($specificInfo['quotes'] as $quote) : ?>
+            <?php if (isset($quote['amount'])) : ?>
+                <tr>
+                    <th scope="row"><?= $escaper->escapeHtml(__('Amount')); ?></th>
+                    <td>
+                    <?= $escaper->escapeHtml($quote['amount']); ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if (isset($quote['address']) && !isset($quote['alias'])) : ?>
+                <tr>
+                    <th scope="row"><?= $escaper->escapeHtml(__('CVU')); ?></th>
+                    <td>
+                        <?= $escaper->escapeHtml($quote['address']); ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if (isset($quote['alias'])) : ?>
+                <tr>
+                    <th scope="row"><?= $escaper->escapeHtml(__('Alias')); ?></th>
+                    <td>
+                        <?= $escaper->escapeHtml($quote['alias']); ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if (isset($quote['currency'])) : ?>
+                <tr>
+                    <th scope="row"><?= $escaper->escapeHtml(__('Currency Code')); ?></th>
+                    <td>
+                        <?= $escaper->escapeHtml($quote['currency']); ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>

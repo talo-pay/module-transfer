@@ -1,7 +1,0 @@
-{
-    "sales_order": {
-        "column": {
-            "talopay_paymentid": true
-        }
-    }
-}

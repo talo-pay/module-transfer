@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Talopay_Transfer
+ * 
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <talopay_transfer>
+                <active>0</active>
+                <order_status>pending_payment</order_status>
+                <title>TaloPay - Transfer</title>
+                <redirect>0</redirect>
+                <allowspecific>1</allowspecific>
+                <send_instructions_template>payment_other_talopay_transfer_send_instructions_template</send_instructions_template>
+                <send_instructions_guest_template>payment_other_talopay_transfer_send_instructions_guest_template</send_instructions_guest_template>
+                <specificcountry>AR</specificcountry>
+                <group>offline</group>
+                <status_pay>processing</status_pay>
+                <can_order>false</can_order>
+                <app_id>magento</app_id>
+                <can_authorize>false</can_authorize>
+                <production_credentials>
+                    <client_secret backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                </production_credentials>
+                <sandbox_credentials>
+                    <client_secret backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                </sandbox_credentials>
+
+                <!-- Internal configs -->
+                <model>TaloPay\Transfer\Model\Payment\Transfer</model>
+                <is_gateway>false</is_gateway>
+                <can_use_checkout>true</can_use_checkout>
+                <can_use_internal>true</can_use_internal>
+                <is_offline>true</is_offline>
+                <order_place_redirect_url>talopay/transfer/start</order_place_redirect_url>
+            </talopay_transfer>
+        </payment>
+    </default>
+</config>

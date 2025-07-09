@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Talopay_Transfer
+ * 
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="TaloPay\Transfer\Api\ApiClientInterface"
+                type="TaloPay\Transfer\Model\ApiClient"/>
+    <preference for="TaloPay\Transfer\Api\ConfigInterface"
+                type="TaloPay\Transfer\Config\Config"/>
+
+    <virtualType name="TaloPay\Transfer\Model\Payment\Transfer" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">TaloPay\Transfer\Api\ConfigInterface::PAYMENT_CODE</argument>
+            <argument name="formBlockType" xsi:type="string">TaloPay\Transfer\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">TaloPay\Transfer\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">TaloPayTransferValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">TaloPayTransferCommandPool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="TaloPayTransferValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">TaloPayTransferConfigValueHandler</item>
+                <item name="order_place_redirect_url" xsi:type="string">TaloPayTransferConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="TaloPayTransferConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">TaloPayTransferGatewayConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="TaloPayTransferGatewayConfig" type="TaloPay\Transfer\Config\Config">
+    </virtualType>
+    <type name="TaloPay\Transfer\Config\Config">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">Magento\Payment\Gateway\Config\ConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Commands infrastructure -->
+    <virtualType name="TaloPayTransferCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array"/>
+        </arguments>
+    </virtualType>
+
+    <!-- Custom log file (/var/log/talopay_transfer.log) -->
+    <virtualType name="TaloPay\Transfer\Logger\TaloPayTransferLoggerHandler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/talopay_transfer.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="TaloPay\Transfer\Logger\Logger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="info" xsi:type="object">TaloPay\Transfer\Logger\TaloPayTransferLoggerHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+</config>

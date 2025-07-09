@@ -1,0 +1,18 @@
+<?php
+/**
+ * Talopay_Transfer
+ * 
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+
+/** @var \TaloPay\Transfer\Block\Order\Info\Buttons\RetryPayment $block */
+/** @var \Laminas\Escaper\EscaperInterface $escaper */
+?>
+<?php if($block->canRetry()) : ?>
+<div class="actions">
+    <a href="<?= $escaper->escapeUrl($block->getRetryUrl()) ?>" class="action order">
+        <span><?= $escaper->escapeHtml(__('Retry payment')) ?></span>
+    </a>
+</div>
+<?php endif; ?>
