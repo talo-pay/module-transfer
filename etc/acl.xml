@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Talopay_Transfer
+ * 
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="TaloPay_Transfer::config_talopay_transfer" title="payments"/>
+                        </resource>
+                    </resource>
+                </resource>
+                <resource id="Magento_Sales::sales" title="Sales" translate="title" sortOrder="20">
+                    <resource id="Magento_Sales::sales_operation" title="Operations" translate="title" sortOrder="10">
+                        <resource id="Magento_Sales::sales_order" title="Orders" translate="title" sortOrder="10">
+                            <resource id="Magento_Sales::actions" title="Actions" translate="title" sortOrder="10">
+                                <resource id="TaloPay_Transfer::instruction_email"
+                                          title="TaloPay - Send Instruction Email" translate="title" sortOrder="35"/>
+                            </resource>
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

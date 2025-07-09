@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/**
+ * Talopay_Transfer
+ * 
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="TaloPay_Transfer">
+        <sequence>
+            <module name="Magento_Payment" />
+        </sequence>
+    </module>
+</config>

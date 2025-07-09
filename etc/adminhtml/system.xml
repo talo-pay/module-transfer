@@ -1,0 +1,194 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Talopay_Transfer
+ * 
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="talopay_transfer" showInWebsite="1" showInStore="1" showInDefault="1"
+                   translate="label">
+                <label>TaloPay Transfer</label>
+                <field id="active" type="select" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="environment" type="select" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label">
+                    <label>Environment</label>
+                    <source_model>TaloPay\Transfer\Model\Config\Source\Environment</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <group id="production_credentials" translate="label" showInWebsite="1" showInStore="1"
+                       showInDefault="1">
+                    <label>Credentials</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/environment">production</field>
+                    </depends>
+                    <field id="user_id" type="text" showInWebsite="1" showInStore="1" showInDefault="1"
+                           translate="label">
+                        <label>User ID</label>
+                    </field>
+                    <field id="client_id" type="text" showInWebsite="1" showInStore="1" showInDefault="1"
+                           translate="label">
+                        <label>Client ID</label>
+                    </field>
+                    <field id="client_secret" type="obscure" showInWebsite="1" showInStore="1" showInDefault="1"
+                           translate="label">
+                        <label>Client Secret</label>
+                        <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    </field>
+                    <field id="credential_test" translate="button_label" type="button" showInDefault="1"
+                           showInWebsite="1"
+                           showInStore="1">
+                        <button_label>Test Credentials</button_label>
+                        <frontend_model>TaloPay\Transfer\Block\System\Config\Button\TestCredential</frontend_model>
+                    </field>
+                </group>
+                <group id="sandbox_credentials" translate="label" showInWebsite="1" showInStore="1"
+                       showInDefault="1">
+                    <label>Credentials</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/environment">sandbox</field>
+                    </depends>
+                    <field id="user_id" type="text" showInWebsite="1" showInStore="1" showInDefault="1"
+                           translate="label">
+                        <label>User ID</label>
+                    </field>
+                    <field id="client_id" type="text" showInWebsite="1" showInStore="1" showInDefault="1"
+                           translate="label">
+                        <label>Client ID</label>
+                    </field>
+                    <field id="client_secret" type="obscure" showInWebsite="1" showInStore="1" showInDefault="1"
+                           translate="label">
+                        <label>Client Secret</label>
+                        <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    </field>
+                    <field id="credential_test" translate="button_label" type="button" showInDefault="1"
+                           showInWebsite="1"
+                           showInStore="1">
+                        <button_label>Test Credentials</button_label>
+                        <frontend_model>TaloPay\Transfer\Block\System\Config\Button\TestCredential</frontend_model>
+                    </field>
+                </group>
+                <field id="title" type="text" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label">
+                    <label>Title</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="instructions" type="textarea" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label">
+                    <label>Instructions</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="send_instructions" type="select" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label comment">
+                    <label>Send Instructions</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If this is active, a new email will be sent with the payment instructions after place order</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="send_instructions_template" type="select" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label comment">
+                    <label>Instruction Email</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/send_instructions">1</field>
+                    </depends>
+                </field>
+                <field id="send_instructions_guest_template" type="select" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label comment">
+                    <label>Instruction Guest Email</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/send_instructions">1</field>
+                    </depends>
+                </field>
+                <field id="redirect" type="select" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label">
+                    <label>Redirect</label>
+                    <comment>Use the TaloPay redirection URL to redirect the customer. If 'No' is selected, an internal
+                        page within the ecommerce platform will be used to display the payment instructions.
+                    </comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="order_status" type="select" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label">
+                    <label>New Order Status</label>
+                    <source_model>TaloPay\Transfer\Model\Config\Source\Order\Status\PendingPayment</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="status_pay" type="select" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label">
+                    <label>Payment has been accepted</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="status_rejected" type="select" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label">
+                    <label>Payment has been rejected</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="allowspecific" type="allowspecific" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label">
+                    <label>Payment from Applicable Countries</label>
+                    <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="specificcountry" type="multiselect" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label">
+                    <label>Payment from Applicable Countries</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <can_be_empty>1</can_be_empty>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="sort_order" type="text" showInWebsite="1" showInStore="1"
+                       showInDefault="1" translate="label">
+                    <label>Sort Order</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="debug" type="select" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+                    <label>Debug</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

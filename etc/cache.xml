@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Talopay_Transfer
+ * 
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Cache/etc/cache.xsd">
+    <type name="talopay_transfer_token" translate="label,description"
+          instance="TaloPay\Transfer\Model\Cache\Type\AccessToken">
+        <label>TaloPay Transfer - Access Token Cache</label>
+        <description>Cache for access tokens used by TaloPay_Transfer</description>
+    </type>
+</config>
+

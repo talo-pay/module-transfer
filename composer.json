@@ -1,0 +1,21 @@
+{
+    "name": "talopay/module-transfer",
+    "description": "TaloPay Magento 2 Transfer module",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "version": "2.0.0",
+    "require": {
+        "ext-intl": "*",
+        "php": "~8.2||~8.3||~8.4",
+        "magento/framework": "*",
+        "magento/module-payment": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "TaloPay\\Transfer\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

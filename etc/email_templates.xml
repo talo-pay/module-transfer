@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Talopay_Transfer
+ * 
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="payment_other_talopay_transfer_send_instructions_template" label="TaloPay - Send Payment Instructions"
+              file="talopay_transfer_send_instructions_template.html" type="html" module="TaloPay_Transfer"
+              area="frontend"/>
+    <template id="payment_other_talopay_transfer_send_instructions_guest_template"
+              label="TaloPay - Send Payment Instructions (Guest)" file="talopay_transfer_send_instructions_guest_template.html"
+              type="html" module="TaloPay_Transfer"
+              area="frontend"/>
+</config>

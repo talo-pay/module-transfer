@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Talopay_Transfer
+ * 
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="TaloPay_Transfer::css/talopay.css"/>
+    </head>
+    <body>
+        <referenceContainer name="order.success.additional.info">
+            <block name="instructions" class="TaloPay\Transfer\Block\Payment\View\Instructions"/>
+        </referenceContainer>
+    </body>
+</page>
