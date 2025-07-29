@@ -1,7 +1,7 @@
 <?php
 /**
  * Talopay_Transfer
- * 
+ *
  * @author TaloPay https://talo.com.ar/
  * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
  */
@@ -35,6 +35,8 @@ interface ConfigInterface
     public const XPATH_SANDBOX_CLIENT_ID = 'sandbox_credentials/client_id';
     public const XPATH_SANDBOX_CLIENT_SECRET = 'sandbox_credentials/client_secret';
     public const XPATH_SANDBOX_USER_ID = 'sandbox_credentials/user_id';
+    public const XPATH_NOTIFICATION_EMAIL_STATUS = 'notifications/email_enabled';
+    public const XPATH_NOTIFICATION_EMAIL_TEMPLATE = 'notifications/email_notification_template';
     public const XPATH_STATUS_PAY = 'status_pay';
     public const XPATH_STATUS_REJECTED = 'status_rejected';
     public const XPATH_TALOPAY_APP_ID = 'app_id';
@@ -71,6 +73,18 @@ interface ConfigInterface
      * @return string
      */
     public function getInstructionsTemplateId(): string;
+
+    /**
+     * Return the current notification email status
+     *
+     * @return string
+     */
+    public function getNotificationEmailStatus(): string;
+
+    /**
+     * @return string
+     */
+    public function getNotificationEmailTemplate(): string;
 
     /**
      * @param OrderInterface $order

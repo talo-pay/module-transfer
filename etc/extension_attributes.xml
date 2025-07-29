@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Talopay_Transfer
+ *
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
+    <extension_attributes for="Magento\Sales\Api\Data\InvoiceInterface">
+        <attribute code="due_amount" type="float"/>
+        <attribute code="base_due_amount" type="float"/>
+    </extension_attributes>
+</config>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Talopay_Transfer
- * 
+ *
  * @author TaloPay https://talo.com.ar/
  * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
  */
@@ -14,6 +14,7 @@ use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Payment\Gateway\Config\Config as MagentoConfig;
 use Magento\Sales\Api\Data\OrderInterface;
 use TaloPay\Transfer\Api\ConfigInterface;
+use TaloPay\Transfer\Api\NotificationSenderInterface;
 use TaloPay\Transfer\Model\Config\Source\Environment;
 
 class Config extends MagentoConfig implements ConfigInterface
@@ -81,6 +82,22 @@ class Config extends MagentoConfig implements ConfigInterface
     public function getInstructionsTemplateId(): string
     {
         return $this->getValue(self::XPATH_SEND_INSTRUCTIONS_TEMPLATE);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNotificationEmailStatus(): string
+    {
+        return $this->getValue(self::XPATH_NOTIFICATION_EMAIL_STATUS) ?? NotificationSenderInterface::STATUS_DISABLED;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNotificationEmailTemplate(): string
+    {
+        return $this->getValue(self::XPATH_NOTIFICATION_EMAIL_TEMPLATE);
     }
 
     /**

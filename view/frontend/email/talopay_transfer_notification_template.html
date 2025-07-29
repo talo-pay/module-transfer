@@ -1,0 +1,46 @@
+<!--@subject {{trans "Your %store_name payment update" store_name=$store.frontend_name}} @-->
+<!--@vars {
+"var formattedBillingAddress|raw":"Billing Address",
+"var order_data.email_customer_note|escape|nl2br":"Email Order Note",
+"var order.increment_id":"Order Id",
+"layout handle=\"sales_email_order_items\" order=$order area=\"frontend\"":"Order Items Grid",
+"var payment_html|raw":"Payment Details",
+"var formattedShippingAddress|raw":"Shipping Address",
+"var order.shipping_description":"Shipping Description",
+"var shipping_msg":"Shipping message",
+"var created_at_formatted":"Order Created At (datetime)",
+"var store.frontend_name":"Store Frontend Name",
+"var store_phone":"Store Phone",
+"var paid_amount":"Paid Amount",
+"var due_amount":"Due Amount",
+"var has_due":"Has Amount",
+"var store_email":"Store Email",
+"var store_hours":"Store Hours",
+"var this.getUrl($store,'customer/account/',[_nosid:1])":"Customer Account URL",
+"var order_data.is_not_virtual":"Order Type",
+"var order":"Order",
+"var order_id": "Order DB Id",
+"var order_data.customer_name":"Customer Name"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<table>
+    <tr class="email-intro">
+        <td>
+            <p class="greeting">{{trans "%customer_name," customer_name=$order_data.customer_name}}</p>
+            <p>
+                {{trans "We received a new payment update..."}}
+            </p>
+            <p>
+                {{trans "New payment received a payment of %paid_amount" paid_amount=$paid_amount}}
+            </p>
+            {{depend has_due}}
+            <p>
+                {{trans "There is a remaing of %due_amount" due_amount=$due_amount}}
+            </p>
+            {{/depend}}
+        </td>
+    </tr>
+</table>
+{{template config_path="design/email/footer_template"}}

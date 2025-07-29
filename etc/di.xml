@@ -2,18 +2,23 @@
 <!--
 /**
  * Talopay_Transfer
- * 
+ *
  * @author TaloPay https://talo.com.ar/
  * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-
     <preference for="TaloPay\Transfer\Api\ApiClientInterface"
                 type="TaloPay\Transfer\Model\ApiClient"/>
     <preference for="TaloPay\Transfer\Api\ConfigInterface"
                 type="TaloPay\Transfer\Config\Config"/>
+    <preference for="TaloPay\Transfer\Api\PaymentProcessorInterface"
+                type="TaloPay\Transfer\Processor\PaymentProcessor"/>
+    <preference for="TaloPay\Transfer\Api\Data\PaymentProcessorResponseInterface"
+                type="TaloPay\Transfer\Model\PaymentProcessorResponse"/>
+    <preference for="TaloPay\Transfer\Api\NotificationSenderInterface"
+                type="TaloPay\Transfer\Model\NotificationSender"/>
 
     <virtualType name="TaloPay\Transfer\Model\Payment\Transfer" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
@@ -46,6 +51,23 @@
             </argument>
         </arguments>
     </type>
+    <type name="TaloPay\Transfer\Controller\Transfer\Callback">
+        <arguments>
+            <argument name="paymentProcessor"
+                      xsi:type="object">TaloPay\Transfer\Processor\PaymentProcessorPool
+            </argument>
+            <argument name="logger" xsi:type="object">TaloPayTransferLogger</argument>
+        </arguments>
+    </type>
+    <type name="TaloPay\Transfer\Processor\PaymentProcessorPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="object">TaloPay\Transfer\Processor\PaymentProcessor</item>
+                <item name="status" xsi:type="object">TaloPay\Transfer\Processor\StatusProcessor</item>
+                <item name="notification" xsi:type="object">TaloPay\Transfer\Processor\NotificationProcessor</item>
+            </argument>
+        </arguments>
+    </type>
 
     <!-- Commands infrastructure -->
     <virtualType name="TaloPayTransferCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
@@ -55,16 +77,52 @@
     </virtualType>
 
     <!-- Custom log file (/var/log/talopay_transfer.log) -->
-    <virtualType name="TaloPay\Transfer\Logger\TaloPayTransferLoggerHandler" type="Magento\Framework\Logger\Handler\Base">
+    <virtualType name="TaloPay\Transfer\Logger\TaloPayTransferLoggerHandler"
+                 type="Magento\Framework\Logger\Handler\Base">
         <arguments>
             <argument name="fileName" xsi:type="string">/var/log/talopay_transfer.log</argument>
         </arguments>
     </virtualType>
-    <virtualType name="TaloPay\Transfer\Logger\Logger" type="Magento\Framework\Logger\Monolog">
+    <virtualType name="TaloPayTransferLogger" type="Magento\Framework\Logger\Monolog">
         <arguments>
             <argument name="handlers" xsi:type="array">
                 <item name="info" xsi:type="object">TaloPay\Transfer\Logger\TaloPayTransferLoggerHandler</item>
             </argument>
         </arguments>
     </virtualType>
+    <type name="TaloPay\Transfer\Controller\Transfer\Redirect">
+        <arguments>
+            <argument name="logger" xsi:type="object">TaloPayTransferLogger</argument>
+        </arguments>
+    </type>
+    <type name="TaloPay\Transfer\Controller\Transfer\Start">
+        <arguments>
+            <argument name="logger" xsi:type="object">TaloPayTransferLogger</argument>
+        </arguments>
+    </type>
+    <type name="TaloPay\Transfer\Model\ApiClient">
+        <arguments>
+            <argument name="logger" xsi:type="object">TaloPayTransferLogger</argument>
+        </arguments>
+    </type>
+    <type name="TaloPay\Transfer\Model\NotificationSender">
+        <arguments>
+            <argument name="logger" xsi:type="object">TaloPayTransferLogger</argument>
+        </arguments>
+    </type>
+    <type name="TaloPay\Transfer\Model\Order\Email\Sender\InstructionSender">
+        <arguments>
+            <argument name="logger" xsi:type="object">TaloPayTransferLogger</argument>
+        </arguments>
+    </type>
+    <type name="TaloPay\Transfer\Observer\CreateStoreOnSave">
+        <arguments>
+            <argument name="logger" xsi:type="object">TaloPayTransferLogger</argument>
+        </arguments>
+    </type>
+    <type name="TaloPay\Transfer\Processor\StatusProcessor">
+        <arguments>
+            <argument name="logger" xsi:type="object">TaloPayTransferLogger</argument>
+        </arguments>
+    </type>
 </config>

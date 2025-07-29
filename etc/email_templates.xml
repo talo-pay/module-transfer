@@ -2,7 +2,7 @@
 <!--
 /**
  * Talopay_Transfer
- * 
+ *
  * @author TaloPay https://talo.com.ar/
  * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
  */
@@ -14,6 +14,10 @@
               area="frontend"/>
     <template id="payment_other_talopay_transfer_send_instructions_guest_template"
               label="TaloPay - Send Payment Instructions (Guest)" file="talopay_transfer_send_instructions_guest_template.html"
+              type="html" module="TaloPay_Transfer"
+              area="frontend"/>
+    <template id="payment_other_talopay_transfer_notifications_email_notification_template"
+              label="TaloPay - Send Payment Notification" file="talopay_transfer_notification_template.html"
               type="html" module="TaloPay_Transfer"
               area="frontend"/>
 </config>

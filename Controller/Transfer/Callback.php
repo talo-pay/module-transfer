@@ -1,7 +1,7 @@
 <?php
 /**
  * Talopay_Transfer
- * 
+ *
  * @author TaloPay https://talo.com.ar/
  * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
  */
@@ -15,16 +15,13 @@ use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\DB\TransactionFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
-use Magento\Sales\Model\Service\InvoiceService;
 use Psr\Log\LoggerInterface;
 use TaloPay\Transfer\Api\ApiClientInterface;
 use TaloPay\Transfer\Api\ConfigInterface;
+use TaloPay\Transfer\Api\PaymentProcessorInterface;
 
 class Callback implements HttpPostActionInterface, CsrfAwareActionInterface
 {
@@ -35,9 +32,7 @@ class Callback implements HttpPostActionInterface, CsrfAwareActionInterface
      * @param ApiClientInterface $apiClient
      * @param OrderRepositoryInterface $orderRepository
      * @param LoggerInterface $logger
-     * @param InvoiceService $invoiceService
-     * @param InvoiceSender $invoiceSender
-     * @param TransactionFactory $transactionFactory
+     * @param PaymentProcessorInterface $paymentProcessor
      */
     public function __construct(
         private readonly Request $request,
@@ -46,9 +41,7 @@ class Callback implements HttpPostActionInterface, CsrfAwareActionInterface
         private readonly ApiClientInterface $apiClient,
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly LoggerInterface $logger,
-        private readonly InvoiceService $invoiceService,
-        private readonly InvoiceSender $invoiceSender,
-        private readonly TransactionFactory $transactionFactory,
+        private readonly PaymentProcessorInterface $paymentProcessor,
     ) {
     }
 
@@ -83,67 +76,7 @@ class Callback implements HttpPostActionInterface, CsrfAwareActionInterface
                 throw new LocalizedException(__('There was an error processing your payment.'));
             }
             $order = $this->orderRepository->get($taloPayment['magento']['order_id']);
-            $payment = $order->getPayment();
-            $paymentAdditionalInfo = $payment->getAdditionalInformation();
-            if (!isset($paymentAdditionalInfo['talopay_transfer']) ||
-                !isset($paymentAdditionalInfo['talopay_transfer']['id']) ||
-                $paymentAdditionalInfo['talopay_transfer']['id'] !== $paymentId
-            ) {
-                throw new LocalizedException(__('Invalid payment information'));
-            }
-
-            if (!$order->getTotalDue()) {
-                $this->logger->info('The Order has been paid');
-                throw new LocalizedException(__('The Order has been paid'));
-            }
-
-            $status = strtolower($taloPayment['status']);
-            $this->logger->info('Change status', ['status' => $status]);
-            $additionalInfo = [];
-
-            $isOk = in_array($status, [
-                ApiClientInterface::STATUS_SUCCESS,
-                ApiClientInterface::STATUS_OVERPAID,
-            ]);
-            $state = null;
-            if ($isOk) {
-                $additionalInfo[] = __('Payment has been accepted');
-                $state = $this->config->getStatusPay();
-            }
-            $isUnderpaid = in_array($status, [
-                ApiClientInterface::STATUS_UNDERPAID,
-            ]);
-
-            if (!$isOk && !$isUnderpaid) {
-                $state = $this->config->getStatusRejected();
-                $additionalInfo[] = __('Payment has been rejected');
-            }
-
-            $additionalInfo[] = __('Notification ID %1', $paymentId);
-            if ($status === ApiClientInterface::STATUS_OVERPAID) {
-                $additionalInfo[] = __('The order has been overpaid');
-            }
-            if ($status === ApiClientInterface::STATUS_UNDERPAID) {
-                $additionalInfo[] = __('The order has been underpaid');
-            }
-
-            $order->setState(Order::STATE_PROCESSING)
-                ->addCommentToStatusHistory(implode('<br/>', $additionalInfo), $state ?? false);
-            $this->orderRepository->save($order);
-
-            if ($isOk) {
-                $invoice = $this->invoiceService->prepareInvoice($order);
-                $invoice->register();
-                $invoice->pay();
-                $invoice->save();
-
-                $transaction = $this->transactionFactory->create();
-                $transaction->addObject($invoice);
-                $transaction->addObject($invoice->getOrder());
-                $transaction->save();
-
-                $this->invoiceSender->send($invoice);
-            }
+            $response = $this->paymentProcessor->execute($order, $paymentId, $taloPayment);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
         }

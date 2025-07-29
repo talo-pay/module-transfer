@@ -2,7 +2,7 @@
 <!--
 /**
  * Talopay_Transfer
- * 
+ *
  * @author TaloPay https://talo.com.ar/
  * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
  */
@@ -31,6 +31,10 @@
                 <sandbox_credentials>
                     <client_secret backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
                 </sandbox_credentials>
+                <notifications>
+                    <email_enabled>total</email_enabled>
+                    <email_notification_template>payment_other_talopay_transfer_notifications_email_notification_template</email_notification_template>
+                </notifications>
 
                 <!-- Internal configs -->
                 <model>TaloPay\Transfer\Model\Payment\Transfer</model>
