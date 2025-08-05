@@ -33,3 +33,5 @@
 "There was an error processing your payment.","Hubo un error procesando su pago."
 "User ID","ID de Usuario"
 "Waiting for payment...","Esperando pago..."
+"Partial payment received. Remaining balance: %1","Pago parcial recibido. Monto restante: %1"
+"The invoice #%1 was been generated with transaction id %2","Se generó la factura #%1 con el id de transacción %2"

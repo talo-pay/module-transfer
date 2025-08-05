@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Talopay_Transfer
+ *
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+ -->
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="notifications" translate="label" showInWebsite="1" showInStore="1"
+           showInDefault="1">
+        <label>Notifications</label>
+        <depends>
+            <field id="*/*/active">1</field>
+        </depends>
+        <field id="email_enabled" translate="label" type="select" showInDefault="1" showInWebsite="1"
+               showInStore="1">
+            <label>Email notification status</label>
+            <source_model>TaloPay\Transfer\Model\Config\Source\NotificationStatus</source_model>
+            <comment>
+                <![CDATA[<a target="_blank" href="https://docs.talo.com.ar/ecommerce/introduction">Info</a>]]></comment>
+        </field>
+        <field id="email_notification_template" type="select" showInWebsite="1" showInStore="1" showInDefault="1"
+               translate="label">
+            <label>Notification Email</label>
+            <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+            <depends>
+                <field id="*/*/active">1</field>
+                <field id="*/*/notifications/email_enabled" separator=",">total,transaction</field>
+            </depends>
+        </field>
+    </group>
+</include>

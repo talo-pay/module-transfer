@@ -1,7 +1,7 @@
 <?php
 /**
  * Talopay_Transfer
- * 
+ *
  * @author TaloPay https://talo.com.ar/
  * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
  */

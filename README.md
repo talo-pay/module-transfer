@@ -19,6 +19,19 @@ bin/magento module:enable TaloPay_Transfer
 bin/magento setup:upgrade
 ```
 
+## Configuration
+
+### Notification status
+
+**No:** No notification will be sent by the module. The standard Adobe Commerce notification flow will handle all
+communications.
+
+**On every transaction:** An email with relevant transfer information will be sent every time a webhook is triggered —
+even multiple times for the same order.
+
+**When total is paid:** A notification will be sent only once, when the order reaches the status configured under
+"Payment has been accepted". It informs that the full payment has been received.
+
 ## Uninstall
 
 ```
