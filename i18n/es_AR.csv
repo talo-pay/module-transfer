@@ -35,3 +35,4 @@
 "Waiting for payment...","Esperando pago..."
 "Partial payment received. Remaining balance: %1","Pago parcial recibido. Monto restante: %1"
 "The invoice #%1 was been generated with transaction id %2","Se generó la factura #%1 con el id de transacción %2"
+"The invoice #%1 was generated due to Talo\'s tolerance policy.","Se generó la factura #%1 debido a la política de tolerancia de Talo"

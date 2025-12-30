@@ -3,7 +3,7 @@
     "description": "TaloPay Magento 2 Transfer module",
     "type": "magento2-module",
     "license": "OSL-3.0",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "require": {
         "ext-intl": "*",
         "php": "~8.2||~8.3||~8.4",

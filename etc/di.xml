@@ -63,6 +63,7 @@
         <arguments>
             <argument name="handlers" xsi:type="array">
                 <item name="default" xsi:type="object">TaloPay\Transfer\Processor\PaymentProcessor</item>
+                <item name="tolerance" xsi:type="object">TaloPay\Transfer\Processor\ToleranceProcessor</item>
                 <item name="status" xsi:type="object">TaloPay\Transfer\Processor\StatusProcessor</item>
                 <item name="notification" xsi:type="object">TaloPay\Transfer\Processor\NotificationProcessor</item>
             </argument>
