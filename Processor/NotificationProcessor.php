@@ -14,13 +14,13 @@ use TaloPay\Transfer\Api\Data\PaymentProcessorResponseInterface;
 use TaloPay\Transfer\Api\NotificationSenderInterface;
 use TaloPay\Transfer\Api\PaymentProcessorInterface;
 
-readonly class NotificationProcessor implements PaymentProcessorInterface
+class NotificationProcessor implements PaymentProcessorInterface
 {
     /**
      * @param NotificationSenderInterface $notificationSender
      */
     public function __construct(
-        private NotificationSenderInterface $notificationSender,
+        readonly private NotificationSenderInterface $notificationSender,
     ) {
     }
 

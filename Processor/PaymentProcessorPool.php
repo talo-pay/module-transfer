@@ -15,7 +15,7 @@ use TaloPay\Transfer\Api\Data\PaymentProcessorResponseInterface;
 use TaloPay\Transfer\Api\Data\PaymentProcessorResponseInterfaceFactory;
 use TaloPay\Transfer\Api\PaymentProcessorInterface;
 
-readonly class PaymentProcessorPool implements PaymentProcessorInterface
+class PaymentProcessorPool implements PaymentProcessorInterface
 {
     /**
      * @param PaymentProcessorResponseInterfaceFactory $paymentProcessorResponseFactory
@@ -23,9 +23,9 @@ readonly class PaymentProcessorPool implements PaymentProcessorInterface
      * @param array $handlers
      */
     public function __construct(
-        private PaymentProcessorResponseInterfaceFactory $paymentProcessorResponseFactory,
-        private OrderRepositoryInterface $orderRepository,
-        private array $handlers = [],
+        readonly private PaymentProcessorResponseInterfaceFactory $paymentProcessorResponseFactory,
+        readonly private OrderRepositoryInterface $orderRepository,
+        readonly private array $handlers = [],
     ) {
     }
 

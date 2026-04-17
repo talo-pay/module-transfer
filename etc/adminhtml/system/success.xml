@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Talopay_Transfer
+ *
+ * @author TaloPay https://talo.com.ar/
+ * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
+ */
+ -->
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="success" translate="label" showInWebsite="1" showInStore="1" showInDefault="1">
+        <label>Success Page</label>
+        <depends>
+            <field id="*/*/active">1</field>
+        </depends>
+        <field id="display_account" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Display account</label>
+            <source_model>TaloPay\Transfer\Model\Config\Source\DisplayAccount</source_model>
+        </field>
+    </group>
+</include>

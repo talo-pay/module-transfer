@@ -1,7 +1,7 @@
 <?php
 /**
  * Talopay_Transfer
- * 
+ *
  * @author TaloPay https://talo.com.ar/
  * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
  */
@@ -27,6 +27,7 @@ class Instructions extends Template
      * @param CurrencyInterface $currency
      * @param Session $checkoutSession
      * @param ArrayManager $arrayManager
+     * @param ConfigInterface $config
      * @param array $data
      */
     public function __construct(
@@ -34,55 +35,10 @@ class Instructions extends Template
         readonly private CurrencyInterface $currency,
         readonly private Session $checkoutSession,
         readonly private ArrayManager $arrayManager,
+        readonly private ConfigInterface $config,
         array $data = []
     ) {
         parent::__construct($context, $data);
-    }
-
-    /**
-     * @return array|string
-     */
-    public function getTaloIssuerName()
-    {
-        return $this->getPaymentAdditionalInformation('user_info/full_name', '');
-    }
-
-    /**
-     * @param string $path
-     * @param string|null $defaultValue
-     * @return string|null|array
-     */
-    private function getPaymentAdditionalInformation(string $path, string $defaultValue = null)
-    {
-        $taloData = $this->getPayment()->getAdditionalInformation(ConfigInterface::ORDER_ADDITIONAL_KEY) ?? [];
-        return $this->arrayManager->get($path, $taloData, $defaultValue) ?? $defaultValue;
-    }
-
-    /**
-     * @return false|float|\Magento\Framework\DataObject|OrderPaymentInterface|mixed|null
-     */
-    public function getPayment()
-    {
-        $order = $this->checkoutSession->getLastRealOrder();
-
-        return $order->getPayment();
-    }
-
-    /**
-     * @return array|string
-     */
-    public function getTaloIssuerTaxVatId()
-    {
-        return $this->getPaymentAdditionalInformation('user_info/cuit', '');
-    }
-
-    /**
-     * @return array|string
-     * @throws LocalizedException
-     */
-    public function getTaloQuotes()
-    {
-        return $this->getPaymentAdditionalInformation('quotes', '') ?: [];
     }
 
     /**
@@ -107,6 +63,62 @@ class Instructions extends Template
             }
         }
         return '';
+    }
+
+    /**
+     * @param string $path
+     * @param string|null $defaultValue
+     * @return string|null|array
+     */
+    private function getPaymentAdditionalInformation(string $path, ?string $defaultValue = null)
+    {
+        $taloData = $this->getPayment()->getAdditionalInformation(ConfigInterface::ORDER_ADDITIONAL_KEY) ?? [];
+        return $this->arrayManager->get($path, $taloData, $defaultValue) ?? $defaultValue;
+    }
+
+    /**
+     * @return false|float|\Magento\Framework\DataObject|OrderPaymentInterface|mixed|null
+     */
+    public function getPayment()
+    {
+        $order = $this->checkoutSession->getLastRealOrder();
+
+        return $order->getPayment();
+    }
+
+    /**
+     * @return array|string
+     */
+    public function getTaloIssuerName()
+    {
+        return $this->getPaymentAdditionalInformation('user_info/full_name', '');
+    }
+
+    /**
+     * @return array|string
+     */
+    public function getTaloIssuerTaxVatId()
+    {
+        return $this->getPaymentAdditionalInformation('user_info/cuit', '');
+    }
+
+    /**
+     * @return array|string
+     * @throws LocalizedException
+     */
+    public function getTaloQuotes()
+    {
+        return $this->getPaymentAdditionalInformation('quotes', '') ?: [];
+    }
+
+    /**
+     * Return the config to display account
+     *
+     * @return string
+     */
+    public function isDisplayAccount()
+    {
+        return $this->config->getDisplayAccount();
     }
 
     /**

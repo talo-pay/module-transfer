@@ -28,6 +28,7 @@ interface ConfigInterface
     public const XPATH_ENVIRONMENT = 'environment';
     public const XPATH_INSTRUCTIONS = 'instructions';
     public const XPATH_ORDER_STATUS = 'order_status';
+    public const XPATH_DISPLAY_ACCOUNT = 'success/display_account';
     public const XPATH_PRODUCTION_CLIENT_ID = 'production_credentials/client_id';
     public const XPATH_PRODUCTION_CLIENT_SECRET = 'production_credentials/client_secret';
     public const XPATH_PRODUCTION_USER_ID = 'production_credentials/user_id';
@@ -41,6 +42,10 @@ interface ConfigInterface
     public const XPATH_STATUS_REJECTED = 'status_rejected';
     public const XPATH_TALOPAY_APP_ID = 'app_id';
     public const XPATH_TALOPAY_STORE_ID = 'store_id';
+    public const DISPLAY_ACCOUNT_BOTH = 'both';
+    public const DISPLAY_ACCOUNT_ALIAS = 'alias';
+    public const DISPLAY_ACCOUNT_CVU = 'cvu';
+
 
     /**
      * @param string|null $environment
@@ -53,6 +58,13 @@ interface ConfigInterface
      * @return string
      */
     public function getClientSecret(?string $environment = null);
+
+    /**
+     * Return the setting display account
+     *
+     * @return string
+     */
+    public function getDisplayAccount(): string;
 
     /**
      * @return string

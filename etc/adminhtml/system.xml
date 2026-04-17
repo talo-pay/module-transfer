@@ -27,8 +27,17 @@
                         <field id="*/*/active">1</field>
                     </depends>
                 </field>
+                <field id="store_id" type="label" showInWebsite="1" showInStore="1" showInDefault="1"
+                       translate="label">
+                    <label>Store ID</label>
+                    <comment>After saving valid credentials, this field should contain the Store ID value.</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
                 <include path="TaloPay_Transfer::system/credentials.xml"/>
                 <include path="TaloPay_Transfer::system/notifications.xml"/>
+                <include path="TaloPay_Transfer::system/success.xml"/>
                 <field id="title" type="text" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
                     <label>Title</label>
                     <depends>

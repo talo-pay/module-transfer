@@ -1,7 +1,7 @@
 <?php
 /**
  * Talopay_Transfer
- * 
+ *
  * @author TaloPay https://talo.com.ar/
  * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
  */
@@ -13,6 +13,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -35,6 +37,7 @@ class CreateStoreOnSave implements ObserverInterface
         readonly private ApiClientInterface $apiClient,
         readonly private StoreManagerInterface $storeManager,
         readonly private LoggerInterface $logger,
+        readonly private ManagerInterface $messageManager,
     ) {
     }
 
@@ -56,6 +59,9 @@ class CreateStoreOnSave implements ObserverInterface
 
         try {
             [$newAppId, $newStoreId] = $this->getStoreData($hostname, $baseUrl);
+            if (!$newStoreId) {
+                throw new LocalizedException(__('The store was not created'));
+            }
             $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
             $scopeId = 0;
             if ($observer->getWebsite()) {
@@ -82,6 +88,12 @@ class CreateStoreOnSave implements ObserverInterface
             }
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
+            $this->messageManager->addErrorMessage(
+                __(
+                    '[TaloPay Transfer] There was an error: %1',
+                    $e->getMessage()
+                )
+            );
             return;
         }
     }

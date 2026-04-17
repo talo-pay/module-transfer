@@ -1,7 +1,7 @@
 <?php
 /**
  * Talopay_Transfer
- * 
+ *
  * @author TaloPay https://talo.com.ar/
  * @license OSL-3.0 https://opensource.org/license/osl-3.0.php
  */
@@ -28,6 +28,12 @@ class TestCredentials extends Action implements HttpPostActionInterface
      */
     public const ADMIN_RESOURCE = 'TaloPay_Transfer::config_talopay_transfer';
 
+    /**
+     * @param Context $context
+     * @param ApiClientInterface $taloApi
+     * @param JsonFactory $resultJsonFactory
+     * @param StripTags $tagFilter
+     */
     public function __construct(
         Context $context,
         private readonly ApiClientInterface $taloApi,
@@ -55,6 +61,7 @@ class TestCredentials extends Action implements HttpPostActionInterface
             $userId = $options[$environment . '_user_id'] ?? '';
             $clientId = $options[$environment . '_client_id'] ?? '';
             $clientSecret = $options[$environment . '_client_secret'] ?? '';
+
             // If the secret is "saved" then we need to recover the value
             if ($clientSecret === ConfigInterface::SAFE_PLACEHOLDER) {
                 $clientSecret = null;
@@ -66,6 +73,7 @@ class TestCredentials extends Action implements HttpPostActionInterface
                 $clientId,
                 $clientSecret,
             );
+
             if ($response) {
                 $result['success'] = true;
             }

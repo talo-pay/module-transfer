@@ -76,7 +76,7 @@ class Callback implements HttpPostActionInterface, CsrfAwareActionInterface
                 throw new LocalizedException(__('There was an error processing your payment.'));
             }
             $order = $this->orderRepository->get($taloPayment['magento']['order_id']);
-            $response = $this->paymentProcessor->execute($order, $paymentId, $taloPayment);
+            $this->paymentProcessor->execute($order, $paymentId, $taloPayment);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
         }

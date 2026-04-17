@@ -35,6 +35,9 @@
                     <email_enabled>total</email_enabled>
                     <email_notification_template>payment_other_talopay_transfer_notifications_email_notification_template</email_notification_template>
                 </notifications>
+                <success>
+                    <display_account>alias</display_account>
+                </success>
 
                 <!-- Internal configs -->
                 <model>TaloPay\Transfer\Model\Payment\Transfer</model>

@@ -63,6 +63,14 @@ class Config extends MagentoConfig implements ConfigInterface
     /**
      * @inheritDoc
      */
+    public function getDisplayAccount(): string
+    {
+        return $this->getValue(self::XPATH_DISPLAY_ACCOUNT) ?? '';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getInstructions()
     {
         return (string)$this->getValue(self::XPATH_INSTRUCTIONS);

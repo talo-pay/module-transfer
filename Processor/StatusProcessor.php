@@ -73,7 +73,8 @@ class StatusProcessor implements PaymentProcessorInterface
             $previousResult->addComment(__('The order has been overpaid'));
         }
 
-        if ($order->getTotalPaid() < $order->getGrandTotal()) {
+        if (!!$order->getTotalPaid() &&
+            $order->getTotalPaid() < $order->getGrandTotal()) {
             $previousResult->addComment(__(
                 'Partial payment received. Remaining balance: %1',
                 $this->priceHelper->currencyByStore($order->getTotalDue(), $order->getStoreId()),

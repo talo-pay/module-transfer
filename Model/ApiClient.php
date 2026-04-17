@@ -64,7 +64,6 @@ class ApiClient implements ApiClientInterface
             throw new LocalizedException(__('Invalid response data'));
         } catch (Exception $e) {
             $this->logger->error($e->getMessage(), ['body' => $body, 'request' => $dataPost]);
-
         }
         return null;
     }
@@ -92,10 +91,10 @@ class ApiClient implements ApiClientInterface
      * @throws LocalizedException
      */
     protected function getBearerToken(
-        string $environment = null,
-        string $userId = null,
-        string $clientId = null,
-        string $clientSecret = null
+        ?string $environment = null,
+        ?string $userId = null,
+        ?string $clientId = null,
+        ?string $clientSecret = null
     ) {
         $curlClient = $this->curlFactory->create();
         $environment = $environment ?? $this->config->getEnvironment();

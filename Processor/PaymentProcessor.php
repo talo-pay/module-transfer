@@ -56,6 +56,9 @@ class PaymentProcessor implements PaymentProcessorInterface
         ) {
             throw new LocalizedException(__('Invalid payment information'));
         }
+        if (!isset($taloPayment['transactions'])) {
+            return $previousResult;
+        }
 
         $invoiceMessages = [];
         $notifyAll = $this->config->getNotificationEmailStatus() === NotificationSenderInterface::STATUS_ON_TRANSACTION;
