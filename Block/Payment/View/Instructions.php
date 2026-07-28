@@ -81,9 +81,17 @@ class Instructions extends Template
      */
     public function getPayment()
     {
-        $order = $this->checkoutSession->getLastRealOrder();
+        $order = $this->getLastOrder();
 
         return $order->getPayment();
+    }
+
+    /**
+     * @return \Magento\Sales\Model\Order
+     */
+    public function getLastOrder()
+    {
+        return $this->checkoutSession->getLastRealOrder();
     }
 
     /**
@@ -129,6 +137,14 @@ class Instructions extends Template
     public function isTaloPayTransferMethod()
     {
         return $this->getPayment()->getMethod() === ConfigInterface::PAYMENT_CODE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWaitingPayment()
+    {
+        return $this->getLastOrder()->getTotalDue() > 0;
     }
 
     /**

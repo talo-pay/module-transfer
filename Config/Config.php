@@ -143,17 +143,17 @@ class Config extends MagentoConfig implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getTaloPayAppId(): string
+    public function getTaloPayAppId(?int $storeId = null): string
     {
-        return (string)$this->getValue(self::XPATH_TALOPAY_APP_ID);
+        return (string)$this->getValue(self::XPATH_TALOPAY_APP_ID, $storeId);
     }
 
     /**
      * @inheritDoc
      */
-    public function getTaloPayStoreId(): string
+    public function getTaloPayStoreId(?int $storeId = null): string
     {
-        return (string)$this->getValue(self::XPATH_TALOPAY_STORE_ID);
+        return (string)$this->getValue(self::XPATH_TALOPAY_STORE_ID, $storeId);
     }
 
     /**

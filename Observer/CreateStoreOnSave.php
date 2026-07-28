@@ -16,6 +16,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\UrlInterface;
+use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -30,6 +31,7 @@ class CreateStoreOnSave implements ObserverInterface
      * @param ApiClientInterface $apiClient
      * @param StoreManagerInterface $storeManager
      * @param LoggerInterface $logger
+     * @param ManagerInterface $messageManager
      */
     public function __construct(
         readonly private ConfigInterface $config,
@@ -46,31 +48,47 @@ class CreateStoreOnSave implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $storeId = $this->config->getTaloPayStoreId();
-        $appId = $this->config->getTaloPayAppId();
+        $scope = $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
+        if ($observer->getWebsite()) {
+            $scope = ScopeInterface::SCOPE_WEBSITES;
+            $scopeId = $observer->getWebsite();
+        }
+        if ($observer->getStore()) {
+            return;
+        }
 
-        $baseUrl = $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_WEB);
+        try {
+            $store = $this->resolveStore($scope, (int)$scopeId);
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            $this->messageManager->addErrorMessage(
+                __(
+                    '[TaloPay Transfer] There was an error: %1',
+                    $e->getMessage()
+                )
+            );
+            return;
+        }
+
+        $storeId = $this->config->getTaloPayStoreId((int)$store->getId());
+        $appId = $this->config->getTaloPayAppId((int)$store->getId());
+
+        $baseUrl = $store->getBaseUrl(UrlInterface::URL_TYPE_WEB);
         $parsedUrl = parse_url($baseUrl);
         $hostname = $parsedUrl['host'] ?? null;
         if (!$hostname) {
             $this->logger->error('Invalid host from baseUrl', ['baseUrl' => $baseUrl]);
             return;
         }
+        $prefix = '';
+        if ($scope === ScopeInterface::SCOPE_WEBSITES) {
+            $prefix = 'W';
+        }
 
         try {
-            [$newAppId, $newStoreId] = $this->getStoreData($hostname, $baseUrl);
+            [$newAppId, $newStoreId] = $this->getStoreData($hostname, $baseUrl, $store, $prefix);
             if (!$newStoreId) {
                 throw new LocalizedException(__('The store was not created'));
-            }
-            $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
-            $scopeId = 0;
-            if ($observer->getWebsite()) {
-                $scope = ScopeInterface::SCOPE_WEBSITE;
-                $scopeId = $observer->getWebsite();
-            }
-            if ($observer->getStore()) {
-                $scope = ScopeInterface::SCOPE_STORE;
-                $scopeId = $observer->getStore();
             }
             if ($newAppId !== $appId) {
                 $this->writerConfig->save(implode('/', [
@@ -99,15 +117,37 @@ class CreateStoreOnSave implements ObserverInterface
     }
 
     /**
+     * Resolve the store whose base URL should be used for the given save-event scope.
+     *
+     * @param string $scope
+     * @param int $scopeId
+     * @return \Magento\Store\Api\Data\StoreInterface
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws LocalizedException
+     */
+    private function resolveStore(string $scope, int $scopeId)
+    {
+        if ($scope === ScopeInterface::SCOPE_WEBSITES) {
+            $defaultStore = $this->storeManager->getWebsite($scopeId)->getDefaultStore();
+            if (!$defaultStore) {
+                throw new LocalizedException(__('The website has no default store'));
+            }
+            return $defaultStore;
+        }
+        return $this->storeManager->getStore();
+    }
+
+    /**
      * @param $hostname
      * @param $baseUrl
+     * @param StoreInterface $store
+     * @param string $prefix
      * @return array
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    private function getStoreData($hostname, $baseUrl)
+    private function getStoreData($hostname, $baseUrl, $store, $prefix = '')
     {
         $appId = ConfigInterface::APP_ID;
-        $storeId = $hostname . '_' . $this->storeManager->getStore()->getId();
+        $storeId = $hostname . '_' . $prefix . $store->getId();
 
         $storeRes = $this->apiClient->createStore([
             'store_id' => $storeId,
