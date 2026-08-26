@@ -9,6 +9,8 @@ declare(strict_types = 1);
 
 namespace TaloPay\Transfer\Observer;
 
+use Magento\Framework\App\Cache\Type\Config;
+use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Event\Observer;
@@ -32,6 +34,7 @@ class CreateStoreOnSave implements ObserverInterface
      * @param StoreManagerInterface $storeManager
      * @param LoggerInterface $logger
      * @param ManagerInterface $messageManager
+     * @param TypeListInterface $cacheTypeList
      */
     public function __construct(
         readonly private ConfigInterface $config,
@@ -40,6 +43,7 @@ class CreateStoreOnSave implements ObserverInterface
         readonly private StoreManagerInterface $storeManager,
         readonly private LoggerInterface $logger,
         readonly private ManagerInterface $messageManager,
+        readonly private TypeListInterface $cacheTypeList,
     ) {
     }
 
@@ -48,7 +52,8 @@ class CreateStoreOnSave implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $scope = $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
+        $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
+        $scopeId = 0;
         if ($observer->getWebsite()) {
             $scope = ScopeInterface::SCOPE_WEBSITES;
             $scopeId = $observer->getWebsite();
@@ -85,8 +90,11 @@ class CreateStoreOnSave implements ObserverInterface
             $prefix = 'W';
         }
 
+        $title = $this->config->getStoreName((int)$store->getId()) ?: $hostname;
+        $isValueChanged = false;
+
         try {
-            [$newAppId, $newStoreId] = $this->getStoreData($hostname, $baseUrl, $store, $prefix);
+            [$newAppId, $newStoreId] = $this->getStoreData($title, $hostname, $baseUrl, $store, $prefix);
             if (!$newStoreId) {
                 throw new LocalizedException(__('The store was not created'));
             }
@@ -96,6 +104,7 @@ class CreateStoreOnSave implements ObserverInterface
                     ConfigInterface::PAYMENT_CODE,
                     ConfigInterface::XPATH_TALOPAY_APP_ID
                 ]), $newAppId, $scope, $scopeId);
+                $isValueChanged = true;
             }
             if ($newStoreId !== $storeId) {
                 $this->writerConfig->save(implode('/', [
@@ -103,6 +112,7 @@ class CreateStoreOnSave implements ObserverInterface
                     ConfigInterface::PAYMENT_CODE,
                     ConfigInterface::XPATH_TALOPAY_STORE_ID
                 ]), $newStoreId, $scope, $scopeId);
+                $isValueChanged = true;
             }
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
@@ -113,6 +123,10 @@ class CreateStoreOnSave implements ObserverInterface
                 )
             );
             return;
+        } finally {
+            if ($isValueChanged) {
+                $this->cacheTypeList->cleanType(Config::TYPE_IDENTIFIER);
+            }
         }
     }
 
@@ -138,13 +152,14 @@ class CreateStoreOnSave implements ObserverInterface
     }
 
     /**
-     * @param $hostname
-     * @param $baseUrl
+     * @param string $title
+     * @param string $hostname
+     * @param string $baseUrl
      * @param StoreInterface $store
      * @param string $prefix
      * @return array
      */
-    private function getStoreData($hostname, $baseUrl, $store, $prefix = '')
+    private function getStoreData($title, $hostname, $baseUrl, $store, $prefix = '')
     {
         $appId = ConfigInterface::APP_ID;
         $storeId = $hostname . '_' . $prefix . $store->getId();
@@ -152,7 +167,7 @@ class CreateStoreOnSave implements ObserverInterface
         $storeRes = $this->apiClient->createStore([
             'store_id' => $storeId,
             'app_id' => $appId,
-            'store_name' => $hostname,
+            'store_name' => $title,
             'store_type' => 'magento',
             'store_url' => $baseUrl,
         ]);

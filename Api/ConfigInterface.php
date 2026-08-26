@@ -123,6 +123,12 @@ interface ConfigInterface
      * @param int|null $storeId
      * @return string
      */
+    public function getStoreName(?int $storeId = null): string;
+
+    /**
+     * @param int|null $storeId
+     * @return string
+     */
     public function getTaloPayAppId(?int $storeId = null): string;
 
     /**

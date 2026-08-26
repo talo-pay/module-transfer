@@ -13,6 +13,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Payment\Gateway\Config\Config as MagentoConfig;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Store\Model\Information;
+use Magento\Store\Model\ScopeInterface;
 use TaloPay\Transfer\Api\ConfigInterface;
 use TaloPay\Transfer\Api\NotificationSenderInterface;
 use TaloPay\Transfer\Model\Config\Source\Environment;
@@ -24,7 +26,7 @@ class Config extends MagentoConfig implements ConfigInterface
      * @param EncryptorInterface $encryptor
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
+        private readonly ScopeConfigInterface $scopeConfig,
         private readonly EncryptorInterface $encryptor,
     ) {
         parent::__construct($scopeConfig, ConfigInterface::PAYMENT_CODE);
@@ -138,6 +140,15 @@ class Config extends MagentoConfig implements ConfigInterface
     public function getStatusRejected()
     {
         return $this->getValue(self::XPATH_STATUS_REJECTED);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getStoreName(?int $storeId = null): string
+    {
+        return $this->scopeConfig
+            ->getValue(Information::XML_PATH_STORE_INFO_NAME, ScopeInterface::SCOPE_STORE, $storeId) ?? '';
     }
 
     /**
