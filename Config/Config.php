@@ -13,6 +13,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Payment\Gateway\Config\Config as MagentoConfig;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Store\Model\Information;
+use Magento\Store\Model\ScopeInterface;
 use TaloPay\Transfer\Api\ConfigInterface;
 use TaloPay\Transfer\Api\NotificationSenderInterface;
 use TaloPay\Transfer\Model\Config\Source\Environment;
@@ -24,7 +26,7 @@ class Config extends MagentoConfig implements ConfigInterface
      * @param EncryptorInterface $encryptor
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
+        private readonly ScopeConfigInterface $scopeConfig,
         private readonly EncryptorInterface $encryptor,
     ) {
         parent::__construct($scopeConfig, ConfigInterface::PAYMENT_CODE);
@@ -143,17 +145,26 @@ class Config extends MagentoConfig implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getTaloPayAppId(): string
+    public function getStoreName(?int $storeId = null): string
     {
-        return (string)$this->getValue(self::XPATH_TALOPAY_APP_ID);
+        return $this->scopeConfig
+            ->getValue(Information::XML_PATH_STORE_INFO_NAME, ScopeInterface::SCOPE_STORE, $storeId) ?? '';
     }
 
     /**
      * @inheritDoc
      */
-    public function getTaloPayStoreId(): string
+    public function getTaloPayAppId(?int $storeId = null): string
     {
-        return (string)$this->getValue(self::XPATH_TALOPAY_STORE_ID);
+        return (string)$this->getValue(self::XPATH_TALOPAY_APP_ID, $storeId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTaloPayStoreId(?int $storeId = null): string
+    {
+        return (string)$this->getValue(self::XPATH_TALOPAY_STORE_ID, $storeId);
     }
 
     /**

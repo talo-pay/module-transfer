@@ -37,3 +37,6 @@
 "The invoice #%1 was been generated with transaction id %2","Se generó la factura #%1 con el id de transacción %2"
 "The invoice #%1 was generated due to Talo\'s tolerance policy.","Se generó la factura #%1 debido a la política de tolerancia de Talo"
 "Both","Ambos"
+"Talo Api Validation Error: %1","Error de validación de Talo: %1"
+"Talo Api Response: %1","Respuesta de Talo: %1"
+"An error occurred while trying to create an access token","Ocurrió un error al intentar crear el token de acceso"

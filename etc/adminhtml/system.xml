@@ -14,22 +14,20 @@
             <group id="talopay_transfer" showInWebsite="1" showInStore="1" showInDefault="1"
                    translate="label">
                 <label>TaloPay Transfer</label>
-                <field id="active" type="select" showInWebsite="1" showInStore="1"
-                       showInDefault="1" translate="label">
+                <field id="active" type="select" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="environment" type="select" showInWebsite="1" showInStore="1"
-                       showInDefault="1" translate="label">
+                <field id="environment" type="select" showInWebsite="1" showInDefault="1" translate="label">
                     <label>Environment</label>
                     <source_model>TaloPay\Transfer\Model\Config\Source\Environment</source_model>
                     <depends>
                         <field id="*/*/active">1</field>
                     </depends>
                 </field>
-                <field id="store_id" type="label" showInWebsite="1" showInStore="1" showInDefault="1"
-                       translate="label">
+                <field id="store_id" showInWebsite="1" showInDefault="1" translate="label">
                     <label>Store ID</label>
+                    <frontend_model>TaloPay\Transfer\Block\System\Config\Label\LabelStoreId</frontend_model>
                     <comment>After saving valid credentials, this field should contain the Store ID value.</comment>
                     <depends>
                         <field id="*/*/active">1</field>
@@ -44,8 +42,8 @@
                         <field id="*/*/active">1</field>
                     </depends>
                 </field>
-                <field id="instructions" type="textarea" showInWebsite="1" showInStore="1"
-                       showInDefault="1" translate="label">
+                <field id="instructions" type="textarea" showInWebsite="1" showInStore="1" showInDefault="1"
+                       translate="label">
                     <label>Instructions</label>
                     <depends>
                         <field id="*/*/active">1</field>
@@ -55,7 +53,9 @@
                        showInDefault="1" translate="label comment">
                     <label>Send Instructions</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>If this is active, a new email will be sent with the payment instructions after place order</comment>
+                    <comment>If this is active, a new email will be sent with the payment instructions after place
+                        order
+                    </comment>
                     <depends>
                         <field id="*/*/active">1</field>
                     </depends>

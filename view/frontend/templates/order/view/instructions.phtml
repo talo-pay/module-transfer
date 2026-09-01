@@ -15,7 +15,7 @@ use TaloPay\Transfer\Api\ConfigInterface;
 <?php
 $displayAccount = $block->isDisplayAccount();
 ?>
-<?php if($block->isTaloPayTransferMethod()) : ?>
+<?php if($block->isTaloPayTransferMethod() && $block->isWaitingPayment()) : ?>
     <div class="talopay-transfer payment-instructions talo-payment-container">
         <div class="payment-status waiting">
             <div class="payment-status-icon"></div>

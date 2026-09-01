@@ -101,6 +101,10 @@ class ApiClient implements ApiClientInterface
         $userId = $userId ?? $this->config->getUserId($environment);
         $clientId = $clientId ?? $this->config->getClientId($environment);
         $clientSecret = $clientSecret ?? $this->config->getClientSecret($environment);
+        if (empty($userId)) {
+            throw new ApiException(__('User ID is required.'));
+        }
+
         $baseUrl = $this->config->getUrl($environment);
         $url = sprintf('%s/users/%s/tokens', $baseUrl, $userId);
         $cacheKey = $this->cache->generateCacheIdUsingData([
@@ -122,7 +126,21 @@ class ApiClient implements ApiClientInterface
         ]));
         $bearer = $this->serializer->unserialize($curlClient->getBody());
         if ($bearer['error'] === true) {
-            return null;
+            if ($bearer['message'] === 'validation.errors') {
+                throw new ApiException(__(
+                    'Talo Api Validation Error: %1',
+                    implode(', ', $bearer['errors'])
+                ));
+            }
+
+            if ($bearer['message']) {
+                throw new ApiException(__(
+                    'Talo Api Response: %1',
+                    $bearer['message']
+                ));
+            }
+
+            throw new ApiException(__('An error occurred while trying to create an access token'));
         }
         $token = '';
         if ($bearer['data'] && $bearer['data']['token']) {
@@ -195,7 +213,7 @@ class ApiClient implements ApiClientInterface
             'payment_options' => ['transfer'],
             'user_id' => $this->config->getUserId(),
             'webhook_url' => $this->urlBuilder->getUrl('talopay/transfer/callback'),
-            'redirect_url' => $this->urlBuilder->getUrl('talopay/transfer/redirect'),
+            'redirect_url' => $this->urlBuilder->getUrl('checkout/onepage/success'),
             'external_id' => $order->getRealOrderId()
         ]);
 

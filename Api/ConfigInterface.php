@@ -120,14 +120,22 @@ interface ConfigInterface
     public function getStatusRejected();
 
     /**
+     * @param int|null $storeId
      * @return string
      */
-    public function getTaloPayAppId(): string;
+    public function getStoreName(?int $storeId = null): string;
 
     /**
+     * @param int|null $storeId
      * @return string
      */
-    public function getTaloPayStoreId(): string;
+    public function getTaloPayAppId(?int $storeId = null): string;
+
+    /**
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getTaloPayStoreId(?int $storeId = null): string;
 
     /**
      * @param string|null $environment
